@@ -1,0 +1,839 @@
+/* Add your CSS here */
+/* Add CSS stylesheet */
+/* For topheader */
+
+* {
+  font-family: "Gill Sans MT";
+}
+
+.header {
+  background-color: #3f4e4f;
+}
+.topbar {
+  width: 70%;
+  background-color: #3f4e4f;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  /* border-top: 3px solid; */
+  /* border-top-color: orange; */
+  position: relative;
+  /* box-shadow: 1px 2px gray; */
+  z-index: 5050;
+  display: inline-block;
+}
+.topbarsearch {
+  padding: 0 8px;
+  width: 80%;
+  display: inline-block;
+  align-items: center;
+  flex-shrink: 10000;
+  flex-grow: 1;
+}
+.topbarcontainer {
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+}
+.toplogo {
+  padding: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  margin-left: 50px;
+  margin-right: 10px;
+}
+.topbox {
+  box-sizing: border-box;
+  height: 100%;
+  flex-shrink: 0;
+  align-items: center;
+  vertical-align: middle;
+  position: relative;
+  user-select: auto;
+  padding: 10px;
+  text-decoration: none;
+}
+.topinput {
+  position: relative;
+  flex-grow: 1;
+  box-sizing: border-box;
+}
+.tinput {
+  padding-left: 32px;
+  width: 100%;
+  justify-content: center;
+  padding: 0.6em 0.7em;
+  border: 1px solid gray;
+  border-radius: 3px;
+  background-color: white;
+  color: black;
+  font-size: 20px;
+  font-family: inherit;
+  letter-spacing: normal;
+  word-spacing: normal;
+  line-height: normal;
+  text-transform: none;
+  text-rendering: auto;
+  text-indent: 0px;
+  text-shadow: none;
+  display: block;
+  text-align: start;
+  cursor: text;
+}
+.toptext {
+  border-radius: 10px;
+  transition: background-color 0.5s ease;
+  color: inherit;
+  text-decoration: none;
+  font-family: sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  padding: 10px;
+  gap: 4px;
+  margin: 0;
+}
+.toptext:hover {
+  background-color: hsl(210, 8%, 55%);
+}
+#logo {
+  width: 150px;
+  height: 49px;
+  border-radius: 5px;
+  display: inline-block;
+}
+/* For menu */
+.left-side {
+  width: 164px;
+  height: 100%;
+  border-right: 1px dashed black;
+  flex-shrink: 0;
+  z-index: 1000;
+  box-shadow: 0 0 0 hsl(210deg 8% 5% / 5%);
+  transition: box-shadow ease-in-out 0.1s, transform ease-in-out 0.1s;
+  transform: translateZ(0);
+  position: relative;
+  box-sizing: border-box;
+}
+.left-side-container {
+  padding-top: 24px;
+}
+.nav-link {
+  padding: 0;
+  margin: 0 0 12px;
+}
+.link-nav-links {
+  font-weight: bold;
+  background-color: white;
+  color: black;
+  /* color: hsl(210,8%,35%); */
+  display: flex;
+  padding: 8px 6px 8px 0;
+  font-size: 13px;
+  line-height: 2;
+  padding-left: 8px;
+  text-decoration: none;
+}
+.link-nav-links:hover {
+  background-color: lightgrey;
+  border-right-color: orange;
+}
+/* .link-nav-links:visited{
+    border-right: 3px solid orange;
+    background-color: grey;
+    color: black;
+} */
+.link-name {
+  font-size: 20px;
+  line-height: 2;
+}
+.userelative {
+  position: relative !important;
+}
+#content {
+  box-sizing: border-box;
+  /* max-width: 1100px; */
+  width: calc(100% - 164px);
+  background-color: white;
+  border-radius: 0;
+  border: 1px solid hsl(210, 8%, 85%);
+  border-top-width: 0;
+  border-bottom-width: 0;
+  border-left-width: 1px;
+  border-right-width: 0;
+
+  padding-right: 8px;
+  margin: 0 auto;
+}
+
+.addQ {
+  position: absolute;
+  top: 1.5%;
+  right: 3%;
+  background-color: rgb(56, 56, 199);
+  color: aliceblue;
+  height: 50px;
+  width: 150px;
+}
+.addQ:hover {
+  background-color: rgb(42, 42, 151);
+  cursor: pointer;
+}
+
+.ansQ, .postQ, .postA {
+  margin: 16px;
+  background-color: rgb(56, 56, 199);
+  color: aliceblue;
+  height: 50px;
+  width: 150px;
+}
+.ansQ:hover, .postQ:hover, .postA:hover {
+  background-color: rgb(42, 42, 151);
+  cursor: pointer;
+}
+
+#answerpage {
+  /* display: none; */
+  grid-template-rows: 20% 80%;
+  padding-left: 15%;
+}
+
+
+.answername {
+  padding-left: 32px;
+  width: 70%;
+  justify-content: center;
+  padding: 0.6em 0.7em;
+  border: 1px solid gray;
+  border-radius: 3px;
+  background-color: white;
+  color: black;
+  font-size: 20px;
+  font-family: inherit;
+  letter-spacing: normal;
+  word-spacing: normal;
+  line-height: normal;
+  text-transform: none;
+  text-rendering: auto;
+  text-indent: 0px;
+  text-shadow: none;
+  display: block;
+  text-align: start;
+  cursor: text;
+  box-shadow: 1px 2px gray;
+}
+.answertext {
+  vertical-align: top;
+  text-align: left;
+  padding-left: 32px;
+  width: 70%;
+  height: 30%;
+  word-wrap: break-word;
+  padding: 0.6em 0.7em;
+  border: 1px solid gray;
+  border-radius: 3px;
+  background-color: white;
+  color: black;
+  font-size: 20px;
+  font-family: inherit;
+  box-shadow: 1px 2px gray;
+  resize: none;
+}
+#answertext {
+  display: block;
+}
+.qTitle {
+  display: flex;
+  box-sizing: border-box;
+  margin-left: 30px;
+  width: 80%;
+  box-shadow: 1px 2px gray;
+}
+.qDetail {
+  text-align: left;
+  display: flex;
+  box-sizing: border-box;
+  margin-left: 30px;
+  width: 80%;
+  height: 30%;
+  box-shadow: 1px 2px gray;
+}
+.qTag {
+  text-align: left;
+  display: flex;
+  box-sizing: border-box;
+  margin-left: 30px;
+  width: 80%;
+  box-shadow: 1px 2px gray;
+}
+.qName {
+  text-align: left;
+  display: flex;
+  box-sizing: border-box;
+  margin-left: 30px;
+  width: 80%;
+  box-shadow: 1px 2px gray;
+}
+#Qname {
+  height: auto;
+
+  word-wrap: break-word;
+}
+#Q{
+  height: 700px;
+  overflow-y: auto;
+}
+#Qdescript {
+  height: auto;
+
+  word-wrap: break-word;
+}
+#topcontent {
+  display: block;
+}
+#questions {
+  width: auto;
+  float: none;
+  clear: both;
+  /* display: none; */
+}
+.about {
+  font-size: 25px;
+}
+html,
+body,
+div,
+span,
+form {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+body {
+  height: 1000px;
+}
+
+li {
+  list-style: none;
+}
+ol {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+}
+a {
+  cursor: pointer;
+  user-select: auto;
+}
+#postQuestion {
+  padding: 24px;
+  padding-left: 16px;
+  margin-bottom: 20px;
+  margin-top: -20px;
+  margin-left: 80px;
+}
+.main {
+  /* max-width: 1264px; */
+  width: 100%;
+  height: 100%;
+  background: none;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  position: relative;
+  text-align: left;
+  margin-top: 0;
+}
+
+.question {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed black;
+  border-left: none;
+  font-family: Arial;
+}
+#questionList {
+  padding-left: 0;
+}
+.questionList {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1px;
+  padding-bottom: 100px;
+  border-left: none;
+}
+.answer {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  border-bottom: 1px dashed black;
+    align-items: center;
+    padding: 10px 0;
+}
+#answerList {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1px;
+  padding-left: 0;
+  border-left: none;
+  margin: 0;
+}
+  #commentList {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1px;
+    padding-left: 0;
+    border-left: none;
+    margin: 0;
+  }
+#tagcontent {
+  /* display: none; */
+  padding: 25px;
+}
+#toptag {
+  padding-bottom: 100px;
+}
+#tag-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding: 16px;
+  margin: 16px;
+}
+.tag-box {
+  flex-wrap: wrap;
+  text-align: center;
+  border: 1px dotted black;
+  padding: 8px;
+}
+
+#countQ {
+  margin-left: 10px;
+  display: inline-block;
+  width: 50%;
+}
+
+#sortButtons {
+  display: inline-block;
+}
+
+.sortButtonsClass {
+  margin: 0;
+  background-color: white;
+  padding: 5 10;
+}
+.sortButtonsClass:hover {
+  background-color: rgb(221, 221, 221);
+  cursor: pointer;
+}
+
+#abody {
+  display: grid;
+  grid-template-columns: 16% 62% 22%;
+  border-bottom: 1px dashed black;
+}
+#aleft {
+  width: auto;
+  padding: right;
+  padding-left: 16px;
+  vertical-align: top;
+  grid-column: 1;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+}
+#amiddle {
+  padding-left: 5%;
+  grid-column: 2;
+  width: 80%;
+  min-width: 0;
+}
+#aright {
+  display: block;
+
+  padding-left: 16px;
+  padding-right: 16px;
+  grid-column: 3;
+
+  align-items: stretch;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.auName {
+  width: 100%;
+
+  height: auto;
+  word-wrap: break-word;
+  margin-top: 100px;
+}
+.q_left {
+  width: 100px;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  margin: 10 0 0 0;
+}
+.q_right {
+  width: 80%;
+  display: inline-block;
+  margin: 10px;
+}
+.q_top {
+  width: 100%;
+}
+
+.q_name {
+  width: 60%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.q_metadata {
+   
+  width: 35%;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: right;
+}
+  .aData{
+    /* text-align: right; */
+      display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 10px;
+  }
+.answerbody {
+    text-align: left;
+  grid-column: 1 / span 2;
+    /* grid-column: 1; */
+  height: auto;
+  word-wrap: break-word;
+  /* padding-right: 16px;
+  padding-left: 16px; */
+}
+.tagcontent {
+  display: inline-block;
+  vertical-align: middle;
+  height: 25px;
+  margin: 0;
+}
+
+.q_answers,
+.q_views {
+  color: #acacac;
+  margin: 0;
+  font-size: 15px;
+}
+
+.q_name {
+  color: #446ac9;
+  font-size: 20px;
+}
+
+.q_metadata_name {
+  color: green;
+}
+
+.q_tags {
+  margin: 10 0 0 0;
+}
+
+.tag {
+  padding: 5;
+  margin: 5;
+  border: solid black;
+  border-radius: 5px;
+  color: white;
+  background-color: #666666;
+}
+
+.answer-container {
+    /* overflow-y: auto; */
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .comment-container {
+  /* overflow-y: auto; */
+    grid-column: 1 / span 2;
+  }
+  .commentButton {
+    grid-column: 3;
+  }
+  .comment{
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    border-bottom: 1px dashed black;
+    align-items: center;
+    padding: 10px 0;
+}
+textarea {
+  resize: none;
+}
+
+.question_list {
+  margin: 0;
+  padding: 0;
+}
+
+.question {
+  display: block;
+  /* border: 2px dotted; */
+  padding: 10px;
+}
+
+.q_num_answers,
+.q_num_views {
+  display: block;
+  align-items: start;
+  margin: 5px;
+}
+
+.q_leftside {
+  width: 100px;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  color: gray;
+}
+
+.q_rightside {
+  width: 90%;
+  display: inline-block;
+  margin: 10px;
+  vertical-align: center;
+}
+
+.q_title {
+  display: inline-block;
+  width: 60%;
+
+  font-size: 20px;
+  color: rgb(29, 29, 199);
+}
+
+.q_metadata {
+  display: inline-block;
+  width: 35%;
+  text-align: right;
+  color: gray;
+}
+
+.q_asked_by {
+  color: rgb(219, 34, 34);
+}
+
+.q_tags {
+  margin: 10px 0 0 0;
+}
+
+.q_tag {
+  margin: 5px;
+  padding: 3px;
+  border: 2px solid black;
+  border-radius: 5px;
+  background-color: dimgrey;
+  color: white;
+}
+#welcome {
+  text-align: center;
+  font-size: 3em;
+  margin: auto;
+  padding: 20px;
+  height: 10%;
+  background-color: orange;
+}
+.inForm{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  
+}
+#pagination {
+  text-align: center;
+  margin-top: 10px;
+}
+
+#pagination button {
+  padding: 5px 10px;
+}
+
+.logoutButton {
+  font-size: 15px;
+  position: absolute;
+  top: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 10px;
+  right: 20px;
+}
+.logoutButton:hover {
+  background-color: #006ee4;
+  cursor: pointer;
+}
+
+.userProfile{
+  font-size: 15px;
+  position: absolute;
+  top: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 10px;
+  right: 100px;
+}
+.userProfile:hover {
+  background-color: #006ee4;
+  cursor: pointer;
+}
+
+input[type="email"],
+input[type="password"],input[placeholder="Username"] {
+  padding: 20px;
+  padding-right: 60px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.formB{
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-top: 10px;
+  margin-left: 120px;
+  bottom: 0;
+  
+}
+.pagination{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-top: 10px;
+} 
+
+  .votecell{
+    margin-top: 100px;
+    width: auto;
+    padding-right:16px;
+    vertical-align: top;
+    grid-column: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .vcount{
+    font-size: 1.61538462rem !important;
+    color:hsl(210,8%,45%);
+    align-items: center !important;
+    flex-direction: column !important;
+    display: flex !important;
+    margin: 2px;
+  }
+  .vbutton{
+    --_bu-baw: 0;
+    --_bu-bg: none;
+    --_bu-br: 0;
+    --_bu-bs: none;
+    --_bu-filled-bs: none;
+    --_bu-fc: unset;
+    --_bu-focus-ring: none;
+    --_bu-p: 0;
+    cursor: pointer !important;
+    font: unset;
+    user-select: auto;
+    outline:initial
+  }
+
+  #userProfile-container{
+    padding: 5%;
+  }
+  
+  /* #userProfile-container-left, #userProfile-container-right{
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 5%;
+  } */
+  
+  .userProfile-section{
+    margin: 0 0 5% 0;
+  }
+  
+  .userProfile-list{
+    list-style-type: none;
+    padding: 0 0 0 10px;
+  }
+  
+  .userProfile-button{
+    color: rgb(29, 29, 199);
+  }
+  
+  #return-button{
+    margin: 16px;
+    background-color: rgb(199, 56, 56);
+    height: 50px;
+    width: 150px;
+  }
+  
+  #return-button:hover{
+    cursor: pointer;
+    background-color: rgb(151, 42, 42);
+  }
+  
+  .tag-button-edit{
+    margin: 2px;
+    background-color: #3f4e4f;
+    height: 20px;
+    width: 50px;
+    border: 1px solid;
+  }
+
+  .tag-button-edit:hover{
+    cursor: pointer;
+    background-color: rgb(54, 66, 66);
+  }
+
+  .tag-button-delete{
+    margin: 2px;
+    background-color: rgb(199, 56, 56);
+    height: 20px;
+    width: 50px;
+    border: 1px solid;
+  }
+
+  .tag-button-delete:hover{
+    cursor: pointer;
+    background-color: rgb(151, 42, 42);
+  }
+
+  /* .userProfile-button:hover{
+    position: relative;
+    left: 5px;
+  } */
+  
