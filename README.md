@@ -8,8 +8,3 @@ Server side:
 	Then run this: node server/server.js
 Client:
 	Run this: npm start
-
-## Team Member 1 Contribution (Evan)
-UserProfile, Admin, UML, init.js, New Users
-## Team Member 2 Contribution (Brian)
-Comments, next/prev pages, votes, WelcomePage
