@@ -2,7 +2,7 @@
   "name": "FakeStackOverflow",
   "version": "1.0.0",
   "scripts": {
-    "start": "npm-run-all --parallel start:client start:server:init start:server",
+    "start": "npm install npm-run-all --parallel start:client start:server:init start:server",
     "start:client": "cd client && npm ci && npm start",
     "start:server:init": "cd server && node init.js mongodb://127.0.0.1:27017/fake_so admin",
     "start:server": "cd server && npm ci && node server.js"
