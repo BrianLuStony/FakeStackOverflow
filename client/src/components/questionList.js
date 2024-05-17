@@ -3,6 +3,9 @@ import AnswerPage from "./AnswerPage.js";
 import { getDateString } from "./content.js";
 import axios from "axios";
 import { addViewQ, getTags,getAns } from "./api.js";
+import { getFirestore,collection,getDocs, onSnapshot } from 'firebase/firestore';
+
+
 export default function QuestionList({
   inputValue,
   tagValue,
@@ -29,25 +32,6 @@ export default function QuestionList({
   const [aClick, setAclick] = useState(false);
   const questionListRef = useRef(null);
 
-  const fetchTagsForQuestion = async (questionId) => {
-    try {
-      // Fetch the question by its ID
-    
-      const response = await axios.get(
-        `http://localhost:8000/posts/tags/${questionId}`
-      );
-      const tags = response.data; // Extract the tags from the response data
-      // console.log("HIii", tags, questionId);
-      // Update the questionTags state with the fetched tags
-      setQuestionTags((prevQuestionTags) => ({
-        ...prevQuestionTags,
-        [questionId]: tags,
-      }));
-    } catch (error) {
-      // Handle error if any
-      console.error("Error:", error);
-    }
-  };
   useEffect(() => {
     const fetchData = async () => {
       try {

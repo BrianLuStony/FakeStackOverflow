@@ -1,12 +1,26 @@
 // Run this script to launch the server.
 // The server should run on localhost port 8000.
 // This is where you should start writing server-side code for this application.
+import { collection, query, where } from "firebase/firestore";
+
+
 const express = require("express");
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require('bcrypt');
+
+const admin = require("firebase-admin");
+const serviceAccount = require("../cred/fakestackoverflow-f08e9-firebase-adminsdk-ygzpa-f0de6212a6.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
+
+const usersCollection = db.collection("users");
 
 const app = express();
 app.use(cors());
@@ -495,21 +509,20 @@ app
               res.status(500).send("Failed to delete Answer");
           });
     });
-app
-    .route("/users")
-    .get((req, res) => {
-    
-        User.find({})
-        .then((users) => {
-            // Send the fetched questions as a response
-            res.json(users);
-        })
-        .catch((err) => {
-            // Handle any errors that occur during the fetch operation
-            console.error(err);
-            res.status(500).send("Internal Server Error");
-        });
-    })
+app.get("/users", async (req, res) => {
+  try {
+    const snapshot = await usersCollection.get();
+    const users = [];
+    snapshot.forEach((doc) => {
+      users.push({ id: doc.id, ...doc.data() });
+    });
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app
     .route("/questions")
     .get((req, res) => {

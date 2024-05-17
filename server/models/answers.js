@@ -19,10 +19,6 @@ const answersSchema = new Schema({
     type: Number,
     default: 0,
   },
-  comments: [{
-    type:Schema.Types.ObjectId ,
-    ref: 'Comment',
-  }],
 });
 
 answersSchema.virtual("url").get(function () {

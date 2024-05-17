@@ -1,0 +1,12 @@
+{
+  "664279caf5d26e7461be5305": {
+    "text": "You can use '+' operator",
+    "ans_by": {
+      "$oid": "66427965f5d26e7461be5096"
+    },
+    "ans_date_time": {
+      "$date": "2024-05-13T20:36:26.344Z"
+    },
+    "votes": 1
+  }
+}

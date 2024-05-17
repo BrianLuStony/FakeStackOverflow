@@ -2,6 +2,7 @@ import React, { useState,useEffect } from "react";
 import axios from "axios";
 import Content from "./content.js"
 import backgroundImage from '../welcome.png'; 
+import Sidebar from "./sidebar/Sidebar.js"
 
 export default function Welcome() {
   
@@ -16,26 +17,6 @@ export default function Welcome() {
   const [isGuest,setIsGuest]=useState(false);
   const [isAdmin, setIsAdmin]=useState(false);
 
-  // const [refresh, setRefresh] = useState(0); // Used to sync client with server data
-
-  // useEffect(() => {
-  //   checkAutoLogin();
-  // }, []);
-
-  // const checkAutoLogin = async () => {
-  //   console.log("inautologin");
-  //   try {
-  //     const response = await axios.get("http://localhost:8000/autologin", {
-  //     withCredentials: true, // Include credentials (session cookie) in the request
-  //   });
-  //     if (response.status === 200) {
-  //       setUser(response.data);
-  //       setIsLoggedIn(true);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
   const handleRegister = async () => {
     // Check if passwords match
@@ -210,7 +191,7 @@ export default function Welcome() {
   if(isLoggedIn || isGuest || isAdmin){
     return(
       <div>
-        <Content user={user} isAdmin={isAdmin} setUser={setUser}/>
+        <Sidebar/>
         <button className="logoutButton" onClick={handleLogout}>Logout</button>
       </div>
     )

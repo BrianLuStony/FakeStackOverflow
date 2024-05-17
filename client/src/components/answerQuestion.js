@@ -11,11 +11,10 @@ async function insertNewA(question,answer,editAns){
       console.log(response.data);
     }else{
       response = await axios.post("http://localhost:8000/answers", answer);
+      console.log(response);
       const newAnswerId = response.data._id;
       question.answers.push(newAnswerId);
       const r = await axios.put(`http://localhost:8000/questions/${question._id}`, {newAnswerId});
-      console.log("Qupdate: ",r);
-      console.log("Answeradded");
     }
    
     // Save the updated question object to the server

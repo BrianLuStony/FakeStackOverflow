@@ -1,0 +1,8 @@
+export MONGODB_URI=mongodb://127.0.0.1:27017/fake_so
+
+mongoexport --uri=$MONGODB_URI --collection=donuts -o donuts_mongo_export.json --jsonArray
+
+jq 'map( {(._id."$oid") : . }) | [.[]| map_values(del(.__v, ._id))]| add' donuts_mongo_export.json > donuts_firestore_import.json
+
+
+firestore-import -a ../cred/fakestackoverflow-f08e9-firebase-adminsdk-ygzpa-f0de6212a6.json -b donuts_firestore_import.json —nodePath donuts -y

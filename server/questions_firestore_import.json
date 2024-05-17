@@ -1,0 +1,41 @@
+{
+  "66427956f5d26e7461be508b": {
+    "title": "How to code in Python",
+    "text": "How to concatenate two strings in Python?",
+    "tags": [
+      {
+        "$oid": "66427956f5d26e7461be5086"
+      },
+      {
+        "$oid": "66427956f5d26e7461be5088"
+      }
+    ],
+    "asked_by": {
+      "$oid": "6642791c59cac44d89643ce1"
+    },
+    "ask_date_time": {
+      "$date": "2024-05-13T20:34:30.269Z"
+    },
+    "answers": [
+      {
+        "$oid": "664279caf5d26e7461be5305"
+      }
+    ],
+    "views": 3,
+    "votes": 0
+  },
+  "6642798df5d26e7461be50b4": {
+    "title": "How to setup Firebase? ",
+    "text": "I'm having trouble setting up firebase while using npm. Does anyone have any clue?",
+    "tags": [],
+    "asked_by": {
+      "$oid": "66427965f5d26e7461be5096"
+    },
+    "ask_date_time": {
+      "$date": "2024-05-13T20:35:25.052Z"
+    },
+    "answers": [],
+    "views": 1,
+    "votes": 1
+  }
+}

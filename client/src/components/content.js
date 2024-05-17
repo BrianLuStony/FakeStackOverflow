@@ -1,204 +1,36 @@
-import Fsoheader from "./fso_header.js";
-import FsoLeft from "./fso_left.js";
-import ContentTop from "./contentTop.js";
-import AskQuestion from "./askQuestion.js";
-import QList from "./questionList.js";
-import TList from "./tagList.js";
-import UserProfile from "./userProfile.js";
-import { useEffect, useState } from "react";
-import { getUser, getQuestions, getTags, getAns } from "./api.js";
 
-export default function Content({user, isAdmin, setUser}) {
-  const [Qflag, setQflag] = useState(true);
-  const [Tflag, setTflag] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const [tagValue, setTagValue] = useState("");
-  const [qClick, setQClick] = useState(false);
-  const [ansQuestionClick, setAnsQuestionClick] = useState(false);
-  const [inMain, setInMain] = useState(true);
-  const [askClick, setAskClick] = useState(false);
-  const [inProfile, setInProfile] = useState(false);
+import Sidebar from "./sidebar/Sidebar.js"
+import HomePage from "./HomePage.js";
+import TagPage from "./TagPage.js";
+// Content.js
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-  const [unans,setUnans] = useState(false);
-  const [newest,setNewest] = useState(true);
-  const [active,setActive] = useState(false);
-
-  const [loading, setLoading] = useState(false);
-  const [questions, setQuestions] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [answers, setAnswers] = useState([]);
-  const [displayedQ, setDisplayedQ] = useState([]);
-
-  const[viewingQuestions, setViewingQuestions] = useState([]);
-
-  const [refresh, setRefresh] = useState(0); // Used to refresh client data upon update
-
-  const refreshData = () => {
-    console.log("Refreshed data");
-    setRefresh(refresh + 1);
-  }
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [Qflag, Tflag, tagValue, qClick, inMain,askClick,ansQuestionClick]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try{
-        if(user){
-          const userData = (await getUser(user._id)).user;
-          // console.log("userData", userData);
-          setUser({...user, created_tags: userData.created_tags, reputation: userData.reputation});
-        }
-        
-        const questionData = (await getQuestions()).questions;
-        const tagData = (await getTags()).tags;
-        const answerData = (await getAns()).answers;
-
-        setQuestions(questionData);
-        setTags(tagData);
-        setAnswers(answerData);
-
-        setLoading(questions == undefined);
-      }
-      catch (error) {
-        console.log(error);
-      }
-    };
-    // if(user){
-      fetchData();
-    // }
-    console.log("refresh: ", refresh);
-  },[refresh]);
-
-  if(loading){
-    return <h1>Loading...</h1>;
-  }
-
-  const top = {
-    setUnans,
-    setNewest,
-    setActive,
-  }
-  const topa ={
-    unans,
-    newest,
-    active,
-  }
-  const set = {
-    setQflag,
-    setTflag,
-    setInputValue,
-    setTagValue,
-    setQClick,
-    setAnsQuestionClick,
-    setInMain,
-    setAskClick,
-    setInProfile,
-    setInProfile,
-    setQuestions,
-    setDisplayedQ,
-    setViewingQuestions,
-  };
-  function setIM() {
-    console.log("askclick");
-    setAskClick(true);
-    setInMain(false);
-    setQflag(false);
-    setTflag(false);
-    setTagValue("");
-    setInputValue("");
-    setInProfile(false);
-  }
-  function setClickProfile(){
-    console.log("clicked in profile");
-    setAskClick(false);
-    setInMain(false);
-    setQflag(false);
-    setTflag(false);
-    setTagValue("");
-    setInputValue("");
-    setInProfile(true);
-  }
-
-  return (
-    <>
-      <div id="header" className="header">
-        <Fsoheader setInputValue={setInputValue} top={top}/>
-        {user ? <button className="userProfile" onClick={setClickProfile}>Profile</button> : <></>}
+export default function Content() {
+  
+  return(
+  <>
+    <Router>
+      <div id="App" className="flex overflow-hidden w-screen h-screen">
+        <Sidebar />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/questions" element={<HomePage />} />
+            <Route path="/tags" element={<TagPage />} />
+            <Route path="/askQ" element={<TagPage />} />
+          </Routes>
+        </main>
       </div>
-      <div id="main" className="main">
-        <FsoLeft
-            top={top}
-            set={set}
-            refresh={refreshData}
-        />
-        <div id="content">
-          {inMain && (
-            <ContentTop
-              q={questions}
-              top={top}
-              displayedQ={displayedQ}
-              setDisplayedQ={setDisplayedQ}
-              inputValue={inputValue}
-              setQflag={setQflag}
-            />
-          )}
-
-          {(!askClick && user && !inProfile) && (
-            <button id="addQ" className="addQ" onClick={setIM}>
-              Ask Question
-            </button>
-          )}
-          {askClick && <AskQuestion set={set} user={user} refresh={refreshData}/>}
-          {Qflag && (
-            <QList
-              inputValue={inputValue}
-              tagValue={tagValue}
-              setTagValue={setTagValue}
-              q={questions}
-              setQ={setQuestions}
-              displayedQ={displayedQ}
-              setDisplayedQ={setDisplayedQ}
-              qClick={qClick}
-              ansQClick={ansQuestionClick}
-              setAnsQClick={setAnsQuestionClick}
-              setQClick={setQClick}
-              setInMain={setInMain}
-              topa={topa}
-              user = {user}
-              refresh={refreshData}
-              tags={tags}
-              answers={answers}
-              viewQ={viewingQuestions}
-            />
-          )}
-          {Tflag && (
-            <TList
-              set={set}
-              fromProfile={false}
-            />
-          )}
-          {inProfile && (
-            <UserProfile
-              set={set}
-              user={user}
-              isAdmin={isAdmin}
-              refresh={refreshData}
-              setV = {setViewingQuestions}
-              setQflag={setQflag}
-              setInProfile={setInProfile}
-            />
-          )}
-        </div>
-      </div>
-    </>
-  );
+    </Router>
+  </>);
 }
+
 
 //Checks if parameter 'date' is within one day of current date and returns date accordingly
 export function getDateString(isostring) {
-  const date = new Date(isostring); // Converts the date stored in ISO format to Date object
+  const timestamp = isostring;
+  const date = new Date(timestamp.$date.seconds * 1000 + timestamp.$date.nanoseconds / 1000000);
+ // Converts the date stored in ISO format to Date object
 
   let currentDate = new Date();
   let diff = currentDate.getTime() - date.getTime();

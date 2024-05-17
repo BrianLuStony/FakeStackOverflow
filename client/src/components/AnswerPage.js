@@ -352,55 +352,10 @@ function Ans(props) {
                         {getDateString(ans.ans_date_time)}
                       </span>
                       <br />
-                      <span className="commentButton">
-                        <button onClick={() => handleCommentClick(ans)}>Comment</button>
-                      </span>
-                      <span className="commentButton">
-                        <button onClick={() => handleDeleteClick(ans)}>Delete</button>
-                      </span>
-                      <span className="commentButton">
-                        <button onClick={() => handleEditClick(ans)}>Edit</button>
-                      </span>
                     </div>
-                    <div className="comment-container">
-                      <ul id="commentList">
-                      {ans.comments.slice(
-                        currentCommentPage * pageCSize,
-                        (currentCommentPage + 1) * pageCSize
-                      ).reverse().map((comment,index)=>{
-                        return (
-                          <div key={comment._id}>
-                            <li className="comment" >
-                            <div className="votecell">
-                              <button className="vbutton" onClick={() => handleUpvoteC(comment._id)}>Upvote</button>
-                              <div className="vcount">{comment.votes}</div>
-                              {/* <button className="vbutton" onClick={() => handleDownvoteComment(comment._id)}>Downvote</button> */}
-                            </div>
-                              Comment: {index }
-                              {comment.text}
-                            </li>
-                          </div>
-                        );
-                      })}
-                      </ul>
-                      <div className="pagination">
-                      <button onClick={handlePrevCommentPage} disabled={currentCommentPage === 0}>
-                        Prev
-                      </button>
-                      <button
-                        onClick={handleNextCommentPage}
-                        disabled={
-                          (currentCommentPage + 1) * pageSize >= ans.comments.length
-                        }
-                      >
-                        Next
-                      </button>
-                    </div>
-                    </div>
-                   
                   </li>
-                </div>
-              ))}
+                </div>    )
+                      )};
             </ul>
             <div className="pagination">
               <button onClick={handlePrevPage} disabled={currentPage === 0}>

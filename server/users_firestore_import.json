@@ -1,0 +1,25 @@
+{
+  "6642791c59cac44d89643ce1": {
+    "username": "admin",
+    "email": "admin@admin.com",
+    "password": "$2b$10$zz23hU0UKoHnA.nMEhrVYuN6SrQAZlqEgdVvNcXJGe9KEUAvgcOa6",
+    "reputation": 9999999,
+    "register_date": {
+      "$date": "2024-05-13T20:33:31.989Z"
+    },
+    "created_tags": [
+      "Python",
+      "Coding"
+    ]
+  },
+  "66427965f5d26e7461be5096": {
+    "username": "ken",
+    "email": "k@gmail.com",
+    "password": "$2b$10$E8OJ4q1MlX79YVbf7kROuOso4K6VirKTQqH6RsWdLXJqBNoiIjg5C",
+    "reputation": 5,
+    "register_date": {
+      "$date": "2024-05-13T20:33:43.118Z"
+    },
+    "created_tags": []
+  }
+}
