@@ -1,11 +1,11 @@
 import React from "react";
-import Welcome from "./content.js"
+import Content from "./content";
 export default class FakeStackOverflow extends React.Component {
   
   render() {
     return (
       <section className="fakeso">
-        <Welcome />
+        <Content />
       </section>
     );
   }

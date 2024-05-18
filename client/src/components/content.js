@@ -1,29 +1,39 @@
 
-import Sidebar from "./sidebar/Sidebar.js"
-import HomePage from "./HomePage.js";
-import TagPage from "./TagPage.js";
-// Content.js
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import Welcome from "./welcome";
+import HomePage from "./HomePage";
+import TagPage from "./TagPage";
+import AskPage from "./AskPage";
+import Sidebar from "./sidebar/Sidebar";
+
+function AppContent() {
+  const location = useLocation();
+  const showSidebar = location.pathname !== "/";
+
+  return (
+    <div id="App" className="flex overflow-hidden w-screen h-screen">
+      {showSidebar && <Sidebar />}
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Welcome />} />
+          <Route path="/questions" element={<HomePage />} />
+          <Route path="/tags" element={<TagPage />} />
+          <Route path="/askQ" element={<AskPage />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
 
 export default function Content() {
-  
-  return(
-  <>
+  return (
     <Router>
-      <div id="App" className="flex overflow-hidden w-screen h-screen">
-        <Sidebar />
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/questions" element={<HomePage />} />
-            <Route path="/tags" element={<TagPage />} />
-            <Route path="/askQ" element={<TagPage />} />
-          </Routes>
-        </main>
-      </div>
+      <AppContent />
     </Router>
-  </>);
+  );
 }
+
 
 
 //Checks if parameter 'date' is within one day of current date and returns date accordingly

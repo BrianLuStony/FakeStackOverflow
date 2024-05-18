@@ -1,119 +1,171 @@
-import { useState, useEffect, React } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { db, auth } from "../index.js"; // Ensure this points to your firebase.js
+import { collection, addDoc ,serverTimestamp} from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 
+export default function AskPage({ modifying, questionToModify, onCancel }) {
+  const [formErrors, setFormErrors] = useState({});
+  const [formData, setFormData] = useState({
+    qTitle: modifying ? questionToModify.title : "",
+    qDetail: modifying ? questionToModify.text : "",
+    qTag: modifying ? questionToModify.tags.join(" ") : "", // assuming tags is an array in questionToModify
+  });
+  const [user] = useAuthState(auth);
+  const navigate = useNavigate();
 
-export default function AskPage() {
-    const [formErrors, setFormErrors] = useState({});
-    const [formData, setFormData] = useState({
-        qTitle: props.modifying ? props.questionToModify.title : "",
-        qDetail: props.modifying ? props.questionToModify.text : "",
-        qTag: tagString,
-      });
+  const handleChange = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  };
 
-    const handleChange = (event) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
-        });
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.qTitle) errors.qTitle = "Title is required";
+    if (!formData.qDetail) errors.qDetail = "Detail is required";
+    if (!formData.qTag) errors.qTag = "Tag is required";
+    return errors;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const errors = validateForm();
+    if (Object.keys(errors).length) {
+      setFormErrors(errors);
+      return;
+    }
+
+    const tagsArray = formData.qTag.split(" ").filter(tag => tag.trim() !== "");
+    const questionData = {
+      title: formData.qTitle,
+      text: formData.qDetail,
+      tags: tagsArray,
+      ask_date_time: serverTimestamp(),
+      asked_by: user ? user.uid : "Anonymous",
+      answers: [],
+      views: 0,
+      last_activity: new Date()
     };
-    return (
-        <div id="questions">
-            <div id="postQuestion">
-            <h1 style={{ marginRight: "12px" }}>
-                Question Title*{" "}
-                {formErrors.qTitle && (
-                <span style={{ color: "red" }}>{formErrors.qTitle}</span>
-                )}
-            </h1>
-            <span>
-                &emsp;&emsp;Limited title to 100 characters or less
-                <br />
-            </span>
-            <form onSubmit={handleSubmit}>
-                <input
-                id="qTitle"
-                name="qTitle"
-                type="text"
-                value={formData.qTitle}
-                role="combobox"
-                className="qTitle topsearch tinput"
-                aria-label="qTitle"
-                aria-expanded="false"
-                placeholder="Title"
-                autoComplete="off"
-                maxLength="100"
-                onChange={handleChange}
-                />
 
-                <h1 style={{ marginRight: "12px" }}>
-                Question Text*{" "}
-                {formErrors.qDetail && (
-                    <span style={{ color: "red" }}>{formErrors.qDetail}</span>
-                )}
-                </h1>
-                <span>
-                &emsp;&emsp;Add details
-                <br />
-                </span>
+    try {
+      if (modifying) {
+        // Handle question update logic here
+      } else {
+        await addDoc(collection(db, "questions"), questionData);
+      }
+      // Redirect or reset form after successful submission
+      navigate('/questions'); // Redirect to questions page or desired route
+    } catch (error) {
+      console.error("Error adding question: ", error);
+    }
+  };
 
-                <textarea
-                id="qDetail"
-                name="qDetail"
-                type="text"
-                value={formData.qDetail}
-                role="combobox"
-                className="qDetail topsearch tinput"
-                aria-label="qDetail"
-                aria-expanded="false"
-                placeholder="Details"
-                autoComplete="off"
-                onChange={handleChange}
-                ></textarea>
+  if (!user) {
+    return <div>Please sign in to ask a question.</div>;
+  }
 
-                <h1 style={{ marginRight: "12px" }}>
-                Tags*{" "}
-                {formErrors.qTag && (
-                    <span style={{ color: "red" }}>{formErrors.qTag}</span>
-                )}
-                </h1>
-                <span>
-                &emsp;&emsp;Add keywords seperated by whitespaces
-                <br />
-                </span>
-                <input
-                id="qTag"
-                name="qTag"
-                type="text"
-                value={formData.qTag}
-                role="combobox"
-                className="qTag topsearch tinput"
-                aria-label="qTag"
-                aria-expanded="false"
-                placeholder="Tags"
-                autoComplete="off"
-                maxLength="55"
-                onChange={handleChange}
-                />
-                <div>
-                <span
-                    style={{
-                    position: "absolute",
-                    bottom: "3%",
-                    right: "15%",
-                    color: "red",
-                    fontSize: "25px",
-                    }}
+  return (
+    <div className="max-w-4xl mx-auto p-4">
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <h1 className="text-2xl font-bold mb-4">
+          {modifying ? "Edit Your Question" : "Ask a New Question"}
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="qTitle" className="block text-lg font-medium text-gray-700">
+              Question Title*{" "}
+              {formErrors.qTitle && (
+                <span className="text-red-500 text-sm">{formErrors.qTitle}</span>
+              )}
+            </label>
+            <input
+              id="qTitle"
+              name="qTitle"
+              type="text"
+              value={formData.qTitle}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Title"
+              maxLength="100"
+              onChange={handleChange}
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Limited to 100 characters or less
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="qDetail" className="block text-lg font-medium text-gray-700">
+              Question Text*{" "}
+              {formErrors.qDetail && (
+                <span className="text-red-500 text-sm">{formErrors.qDetail}</span>
+              )}
+            </label>
+            <textarea
+              id="qDetail"
+              name="qDetail"
+              value={formData.qDetail}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Details"
+              rows="6"
+              onChange={handleChange}
+            ></textarea>
+            <p className="mt-1 text-sm text-gray-500">
+              Add details about your question
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="qTag" className="block text-lg font-medium text-gray-700">
+              Tags*{" "}
+              {formErrors.qTag && (
+                <span className="text-red-500 text-sm">{formErrors.qTag}</span>
+              )}
+            </label>
+            <input
+              id="qTag"
+              name="qTag"
+              type="text"
+              value={formData.qTag}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Tags"
+              maxLength="55"
+              onChange={handleChange}
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Add keywords separated by spaces
+            </p>
+          </div>
+
+          <div className="flex items-center justify-end space-x-4">
+            {modifying && (
+              <>
+                <button
+                  type="button"
+                  className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  onClick={() => null}
                 >
-                    *indicates mandatory fields
-                    <br />
-                </span>
-                <button id="postQ" type="submit" className="postQ">
-                    {props.modifying ? "Update" : "Sent"}
+                  Delete
                 </button>
-                {props.modifying ? <button id="return-button" onClick={(e) => deleteQuestion(props.questionToModify, props.onCancel, e)}>Delete</button> : <></>}
-                {props.modifying ? <button id="return-button" onClick={props.onCancel}>Cancel</button> : <></>}
-                </div>
-            </form>
-            </div>
-        </div>
-        );
+                <button
+                  type="button"
+                  className="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  onClick={()=>null}
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+            <button
+              type="submit"
+              className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              {modifying ? "Update" : "Submit"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
