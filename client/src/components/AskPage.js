@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db, auth } from "../index.js"; // Ensure this points to your firebase.js
-import { collection, addDoc ,serverTimestamp} from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function AskPage({ modifying, questionToModify, onCancel }) {
@@ -25,7 +25,6 @@ export default function AskPage({ modifying, questionToModify, onCancel }) {
     const errors = {};
     if (!formData.qTitle) errors.qTitle = "Title is required";
     if (!formData.qDetail) errors.qDetail = "Detail is required";
-    if (!formData.qTag) errors.qTag = "Tag is required";
     return errors;
   };
 
@@ -37,25 +36,41 @@ export default function AskPage({ modifying, questionToModify, onCancel }) {
       return;
     }
 
-    const tagsArray = formData.qTag.split(" ").filter(tag => tag.trim() !== "");
-    const questionData = {
-      title: formData.qTitle,
-      text: formData.qDetail,
-      tags: tagsArray,
-      ask_date_time: serverTimestamp(),
-      asked_by: user ? user.uid : "Anonymous",
-      answers: [],
-      views: 0,
-      last_activity: new Date()
-    };
+    const tagsArray = formData.qTag ? formData.qTag.split(" ").filter(tag => tag.trim() !== "") : [];
 
     try {
+      const tagReferences = [];
+      for (const tag of tagsArray) {
+        const tagDocRef = doc(db, "tags", tag);
+        const tagDoc = await getDoc(tagDocRef);
+
+        if (!tagDoc.exists()) {
+          await setDoc(tagDocRef, { name: tag });
+        }
+
+        tagReferences.push(tagDocRef);
+      }
+
+      const userRef = user ? doc(db, "users", user.uid) : null;
+
+      const questionData = {
+        title: formData.qTitle,
+        text: formData.qDetail,
+        tags: tagReferences,
+        ask_date_time: serverTimestamp(),
+        asked_by: userRef,
+        answers: [],
+        views: 0,
+        votes: 0,
+      };
+
       if (modifying) {
-        // Handle question update logic here
+        const questionRef = doc(db, "questions", questionToModify.id);
+        await updateDoc(questionRef, questionData);
       } else {
         await addDoc(collection(db, "questions"), questionData);
       }
-      // Redirect or reset form after successful submission
+
       navigate('/questions'); // Redirect to questions page or desired route
     } catch (error) {
       console.error("Error adding question: ", error);
@@ -118,7 +133,7 @@ export default function AskPage({ modifying, questionToModify, onCancel }) {
 
           <div>
             <label htmlFor="qTag" className="block text-lg font-medium text-gray-700">
-              Tags*{" "}
+              Tags
               {formErrors.qTag && (
                 <span className="text-red-500 text-sm">{formErrors.qTag}</span>
               )}
@@ -151,7 +166,7 @@ export default function AskPage({ modifying, questionToModify, onCancel }) {
                 <button
                   type="button"
                   className="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                  onClick={()=>null}
+                  onClick={onCancel}
                 >
                   Cancel
                 </button>

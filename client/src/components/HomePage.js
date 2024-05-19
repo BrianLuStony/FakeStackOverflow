@@ -1,19 +1,49 @@
-import { useEffect, useState , useCallback} from "react";
-import { collection, onSnapshot,query,orderBy, where ,getDoc,doc} from "firebase/firestore";
+import { useEffect, useState, useCallback } from "react";
+import { collection, onSnapshot, query, orderBy, where, getDoc, doc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../index.js";
 import { getDateString } from "./content.js";
-import { useLocation,useNavigate  } from "react-router-dom"; 
+import { useLocation, useNavigate } from "react-router-dom";
 
-export default function HomePage({ user, isAdmin, setUser }) {
+export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [filteredQuestions, setFilteredQuestions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  const [user, setUser] = useState(null);
+  const [userDisplayName, setUserDisplayName] = useState('Guest');
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const tagId = searchParams.get('tag');
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUser(user);
+        console.log(user.uid);
+        try {
+          const userDocRef = doc(db, 'users', user.uid); // Adjust this path based on your Firestore structure
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            console.log(userData);
+            setUserDisplayName(userData.username); // Adjust the field name based on your Firestore document
+          } else {
+            console.error("No such document!");
+          }
+        } catch (error) {
+          console.error("Error fetching user document: ", error);
+        }
+      } else {
+        setUser(null);
+        setUserDisplayName('Guest');
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const fetchData = useCallback(async () => {
     try {
@@ -82,8 +112,7 @@ export default function HomePage({ user, isAdmin, setUser }) {
       console.log(error);
       setLoading(false);
     }
-  },[sortBy, tagId]);
-
+  }, [sortBy, tagId]);
 
   const filterQuestions = useCallback(() => {
     if (searchQuery) {
@@ -94,8 +123,8 @@ export default function HomePage({ user, isAdmin, setUser }) {
     } else {
       setFilteredQuestions(questions);
     }
-  },[questions, searchQuery]);
-  
+  }, [questions, searchQuery]);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -117,7 +146,7 @@ export default function HomePage({ user, isAdmin, setUser }) {
       filterQuestions();
     }
   };
-  
+
   const handleInputChange = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -128,64 +157,65 @@ export default function HomePage({ user, isAdmin, setUser }) {
 
   return (
     <>
-        <div className="topbar bg-gray-200 p-4 flex justify-between items-center">
-            <span className="text-lg font-bold">All questions</span>
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                placeholder="Search questions..."
-                onChange={handleInputChange}
-                onKeyDown={handleSearch}
-                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <div className="sort-buttons flex space-x-2">
-                  <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleSortChange('newest')}>Newest</button>
-                  <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleSortChange('unanswered')}>Unanswered</button>
-                  <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleSortChange('active')}>Active</button>
-              </div>
-              <div className="sort-buttons flex space-x-2">
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleAsk()}>Ask Question</button>
-              </div>
-            </div>
+      <div className="topbar bg-gray-200 p-4 flex justify-between items-center">
+        <span className="text-lg font-bold">All questions</span>
+        <div className="flex items-center space-x-2">
+          <input
+            type="text"
+            placeholder="Search questions..."
+            onChange={handleInputChange}
+            onKeyDown={handleSearch}
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <div className="sort-buttons flex space-x-2">
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleSortChange('newest')}>Newest</button>
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleSortChange('unanswered')}>Unanswered</button>
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleSortChange('active')}>Active</button>
+          </div>
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={handleAsk}>Ask Question</button>
+          <span className="ml-4 text-gray-700 font-medium">
+            {userDisplayName}
+          </span>
         </div>
-        <div id = "Q">
-            <ul id="questionList">
-                {filteredQuestions.map((question) => (
-                    <li key={question._id} className="question">
-                    <div className="q_leftside">
-                    <span className="q_num_answers">{Array.from(question.answers).length} Answer</span>
-                    <span className="q_num_views">{question.views} View</span>
-                    </div>
-                    <div className="q_rightside">
-                    <div className="q_top">
-                        <a
-                        className="q_title bold"
-                        onClick={() => {
-                            console.log("I got clicked")
-                        }}
-                        >
-                        {question.title}
-                        </a>
-                        <div className="q_metadata">
-                        <span className="q_asked_by">{question.userData.username}</span>
-                        <span> asked </span>
-                        <span className="q_ask_date">
-                            {getDateString(question.ask_date_time)}
-                        </span>
-                        </div>
-                        <div className="q_tags">
-                          {question.tagsData?.map((tag) => (
-                            <span key={tag.tagID} className="tag p-1 mr-2">
-                              {tag.name}
-                            </span>
-                          ))}
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                ))}
-                </ul>
-            </div>
+      </div>
+      <div id="Q">
+        <ul id="questionList">
+          {filteredQuestions.map((question) => (
+            <li key={question.id} className="question">
+              <div className="q_leftside">
+                <span className="q_num_answers">{Array.from(question.answers).length} Answer</span>
+                <span className="q_num_views">{question.views} View</span>
+              </div>
+              <div className="q_rightside">
+                <div className="q_top">
+                  <a
+                    className="q_title bold"
+                    onClick={() => {
+                      console.log("I got clicked")
+                    }}
+                  >
+                    {question.title}
+                  </a>
+                  <div className="q_metadata">
+                    <span className="q_asked_by">{question.userData?.username}</span>
+                    <span> asked </span>
+                    <span className="q_ask_date">
+                      {getDateString(question.ask_date_time)}
+                    </span>
+                  </div>
+                  <div className="q_tags">
+                    {question.tagsData?.map((tag) => (
+                      <span key={tag.tagID} className="tag p-1 mr-2">
+                        {tag.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 }

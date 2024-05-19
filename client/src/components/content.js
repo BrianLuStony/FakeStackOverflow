@@ -38,8 +38,11 @@ export default function Content() {
 
 //Checks if parameter 'date' is within one day of current date and returns date accordingly
 export function getDateString(isostring) {
+  if (!isostring || !isostring.seconds) {
+    return "Just now";
+  }
   const timestamp = isostring;
-  const date = new Date(timestamp.$date.seconds * 1000 + timestamp.$date.nanoseconds / 1000000);
+  const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
  // Converts the date stored in ISO format to Date object
 
   let currentDate = new Date();
