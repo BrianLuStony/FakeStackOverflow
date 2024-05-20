@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { db, auth } from "../index.js";
-import {
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getDateString } from "./content.js";
 
@@ -58,6 +55,9 @@ export default function QuestionPage() {
     fetchQuestion();
   }, [questionId]);
 
+  const handleAnswerClick = (questionId) => {
+    navigate(`/question/${questionId}/answerquestion`);
+  };
   if (!question) {
     return <div>Loading...</div>;
   }
@@ -68,7 +68,7 @@ export default function QuestionPage() {
         <div id="abody" className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div id="aleft" className="col-span-1">
             <h2 className="text-xl font-semibold mb-4">{answers.length} answers</h2>
-            <h2 className="text-xl font-semibold mt-20">{question.views + 1} views</h2>
+            <h2 className="text-xl font-semibold mt-20">{question.views} views</h2>
           </div>
           <div id="amiddle" className="col-span-2">
             <div id="Qname">
@@ -119,10 +119,10 @@ export default function QuestionPage() {
             ))}
           </ul>
         </div>
-        <button type="submit" className="mt-8 bg-green-500 text-white font-bold py-2 px-4 rounded shadow hover:bg-green-600">
+        <button type="submit" onClick = {() => handleAnswerClick()} className="mt-8 bg-green-500 text-white font-bold py-2 px-4 rounded shadow hover:bg-green-600">
           Answer Question
         </button>
       </div>
     </div>
-  );  
+  );
 }

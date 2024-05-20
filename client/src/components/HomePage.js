@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { collection, onSnapshot, query, orderBy, where, getDoc, doc } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, where, getDoc, doc, updateDoc, increment } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../index.js";
 import { getDateString } from "./content.js";
@@ -24,11 +24,11 @@ export default function HomePage() {
       if (user) {
         setUser(user);
         try {
-          const userDocRef = doc(db, 'users', user.uid); // Adjust this path based on your Firestore structure
+          const userDocRef = doc(db, 'users', user.uid);
           const userDocSnap = await getDoc(userDocRef);
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
-            setUserDisplayName(userData.username); // Adjust the field name based on your Firestore document
+            setUserDisplayName(userData.username);
           } else {
             console.error("No such document!");
           }
@@ -123,6 +123,24 @@ export default function HomePage() {
     }
   }, [questions, searchQuery]);
 
+  const incrementViews = async (questionId) => {
+    try {
+      const questionRef = doc(db, "questions", questionId);
+      console.log(`Incrementing views for questionId: ${questionId}`);
+      await updateDoc(questionRef, {
+        views: increment(1),
+      });
+      console.log(`Views incremented for questionId: ${questionId}`);
+    } catch (error) {
+      console.error("Error incrementing views:", error);
+    }
+  };
+
+  const handleQuestionClick = useCallback(async (questionId) => {
+    await incrementViews(questionId);
+    navigate(`/question?questionId=${questionId}`);
+  }, [navigate]);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -134,6 +152,7 @@ export default function HomePage() {
   const handleAsk = () => {
     navigate('/askQ');
   };
+
   const handleSortChange = (sortOption) => {
     setSortBy(sortOption);
     navigate('/questions');
@@ -155,62 +174,84 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="topbar bg-gray-200 p-4 flex justify-between items-center">
-        <span className="text-lg font-bold">All questions</span>
-        <div className="flex items-center space-x-2">
-          <input
-            type="text"
-            placeholder="Search questions..."
-            onChange={handleInputChange}
-            onKeyDown={handleSearch}
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div className="sort-buttons flex space-x-2">
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleSortChange('newest')}>Newest</button>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleSortChange('unanswered')}>Unanswered</button>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={() => handleSortChange('active')}>Active</button>
+      <div className="flex flex-col h-full">
+        <div className="topbar bg-gray-200 p-4 flex justify-between items-center">
+          <span className="text-lg font-bold">All questions</span>
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              placeholder="Search questions..."
+              onChange={handleInputChange}
+              onKeyDown={handleSearch}
+              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <div className="sort-buttons flex space-x-2">
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                onClick={() => handleSortChange('newest')}
+              >
+                Newest
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                onClick={() => handleSortChange('unanswered')}
+              >
+                Unanswered
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                onClick={() => handleSortChange('active')}
+              >
+                Active
+              </button>
+            </div>
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+              onClick={handleAsk}
+            >
+              Ask Question
+            </button>
+            <span className="ml-4 text-gray-700 font-medium">
+              {userDisplayName}
+            </span>
           </div>
-          <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none" onClick={handleAsk}>Ask Question</button>
-          <span className="ml-4 text-gray-700 font-medium">
-            {userDisplayName}
-          </span>
         </div>
-      </div>
-      <div id="Q">
-        <ul id="questionList">
-          {filteredQuestions.map((question) => (
-            <li key={question.id} className="question">
-              <div className="q_leftside">
-                <span className="q_num_answers">{Array.from(question.answers).length} Answer</span>
-                <span className="q_num_views">{question.views} View</span>
-              </div>
-              <div className="q_rightside">
-                <div className="q_top">
-                  <a
-                    className="q_title bold"
-                    href={`/question?questionId=${question.id}`}
-                  >
-                    {question.title}
-                  </a>
-                  <div className="q_metadata">
-                    <span className="q_asked_by">{question.userData?.username}</span>
-                    <span> asked </span>
-                    <span className="q_ask_date">
-                      {getDateString(question.ask_date_time)}
-                    </span>
-                  </div>
-                  <div className="q_tags">
-                    {question.tagsData?.map((tag) => (
-                      <span key={tag.tagID} className="tag p-1 mr-2">
-                        {tag.name}
+        <div id="Q" className="flex-1 overflow-auto">
+          <ul id="questionList">
+            {filteredQuestions.map((question) => (
+              <li key={question.id} className="question">
+                <div className="q_leftside">
+                  <span className="q_num_answers">{Array.from(question.answers).length} Answer</span>
+                  <span className="q_num_views">{question.views} View</span>
+                </div>
+                <div className="q_rightside">
+                  <div className="q_top">
+                    <a
+                      className="q_title bold"
+                      onClick={() => handleQuestionClick(question.id)}
+                    >
+                      {question.title}
+                    </a>
+                    <div className="q_metadata">
+                      <span className="q_asked_by">{question.userData?.username}</span>
+                      <span> asked </span>
+                      <span className="q_ask_date">
+                        {getDateString(question.ask_date_time)}
                       </span>
-                    ))}
+                    </div>
+                    <div className="q_tags">
+                      {question.tagsData?.map((tag) => (
+                        <span key={tag.tagID} className="tag p-1 mr-2">
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </>
   );

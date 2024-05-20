@@ -1,112 +1,106 @@
 import { checkHyper } from "./content.js";
 import { useEffect, useState } from "react";
-import axios from "axios";
-async function insertNewA(question,answer,editAns){
-  try{
-    let response = "";
-    if(editAns){
-      console.log(answer);
-      response = await axios.put(`http://localhost:8000/answers2/${editAns._id}`, answer);
-      // handle success
-      console.log(response.data);
-    }else{
-      response = await axios.post("http://localhost:8000/answers", answer);
-      console.log(response);
-      const newAnswerId = response.data._id;
-      question.answers.push(newAnswerId);
-      const r = await axios.put(`http://localhost:8000/questions/${question._id}`, {newAnswerId});
-    }
-   
-    // Save the updated question object to the server
-    
-  }catch(error){
-    console.log(error);
-  }
-}
-export default function AnswerQuestion({question,handleAnsClick,setAnswerC,user,setAclick, editAns,setEditAns}){
-  var date = new Date();
+import { addDoc, collection, serverTimestamp, updateDoc, doc } from "firebase/firestore";
+import { db } from "../index.js";
+import { useLocation } from 'react-router-dom';
+import { useAuthState } from "react-firebase-hooks/auth";
+
+export default function AnswerQuestion() {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const questionId = searchParams.get('questionId');
+
   const [formData, setFormData] = useState({
     answerText: "",
   });
   const [formErrors, setFormErrors] = useState({});
-  useEffect(()=>{
 
-  },[formData]);
+  useEffect(() => {}, [formData]);
 
-
-  const newAnswer = {
-    text: "",
-    ans_by:user,
-    ans_date_time: date,
-  }
-
-  function handleChange(event){
+  function handleChange(event) {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
-    })
+    });
   }
-  function handlePost(event){
+
+  async function handlePost(event) {
+    const [user] = useAuthState(auth);
     event.preventDefault(); // prevent form from reloading
     const errors = {};
-   
+
     if (formData.answerText.trim().length === 0) {
-      errors.answerText = "Question text should not be empty";
-    } 
-    else {
+      errors.answerText = "Answer text should not be empty";
+    } else {
       checkHyper(formData.answerText, errors);
     }
-    
+
     setFormErrors(errors);
     if (Object.keys(errors).length === 0) {
-      console.log("posted answer: " + newAnswer.aid);
-      newAnswer.ans_by = user;
-      setAclick(false);
-      newAnswer.text = formData.answerText;
-      console.log("New Answer: ",newAnswer);
-      setAnswerC(false);
-      insertNewA(question,newAnswer,editAns);
-      setEditAns(null);
-      handleAnsClick();
+      const userRef = user ? doc(db, "users", user.uid) : null;
+      const newAnswer = {
+        text: formData.answerText,
+        ans_by: userRef,
+        ans_date_time: serverTimestamp(),
+      };
+      await insertNewA(questionId, newAnswer); // Changed question.id to questionId
       setFormData({
         answerText: "",
       });
+      navigate(`/question?questionId=${questionId}`);
     }
-
   }
-  return(
+
+  async function insertNewA(questionId, newAnswer) { // Changed question.id to questionId
+    try {
+      const answerRef = await addDoc(collection(db, "answers"), newAnswer);
+      const questionRef = doc(db, "questions", questionId);
+      await updateDoc(questionRef, {
+        answers: arrayUnion(answerRef)
+      });
+    } catch (error) {
+      console.error("Error adding answer: ", error);
+    }
+  }
+
+  return (
     <div id="answerpage">
-        <form id="aform">
-          <div id="answername">
-              {/* <h1 style={{ marginRight: "12px" }}>{" "}
-                {formErrors.answerName && (
-                  <span style={{ color: "red" }}>{formErrors.answerName}</span>
-                )}
-              </h1>
-               */}
+      <form id="aform">
+        <div id="answertext">
+          <h1>
+            Answer Text*{" "}
+            {formErrors.answerText && (
+              <span style={{ color: "red" }}>{formErrors.answerText}</span>
+            )}
+          </h1>
+          <textarea
+            name="answerText"
+            type="text"
+            role="combobox"
+            className="answertext"
+            aria-expanded="false"
+            placeholder="Text"
+            autoComplete="off"
+            onChange={handleChange}
+          />
+          <div style={{ display: "inline-block", width: "150%" }}>
+            <button id="postA" type="submit" className="postA" onClick={handlePost}>
+              Post Answer
+            </button>
+            <span
+              style={{
+                marginLeft: "30%",
+                marginTop: "20px",
+                color: "red",
+                fontSize: "25px",
+              }}
+            >
+              *indicates mandatory fields
+              <br />
+            </span>
           </div>
-          <div id="answertext">
-            <h1>Answer Text*{" "}
-                {formErrors.answerText && (
-                  <span style={{ color: "red" }}>{formErrors.answerText}</span>
-                )}
-            </h1>
-            <textarea 
-              name="answerText" 
-              type="text" 
-              role="combobox" 
-              className= "answertext" 
-              aria-expanded="false" 
-              placeholder="Text" 
-              autoComplete="off"
-              onChange={handleChange}
-            />
-            <div style={{display: "inline-block", width: "150%"}}>
-              <button id= "postA" type = "submit" className="postA" onClick={handlePost}>Post Answer</button>
-              <span style={{marginLeft: "30%", marginTop: "20px", color: "red", fontSize: "25px"}}>*indicates mandatory fields<br/></span>
-            </div>
-          </div>
-        </form>
-      </div>
+        </div>
+      </form>
+    </div>
   );
 }

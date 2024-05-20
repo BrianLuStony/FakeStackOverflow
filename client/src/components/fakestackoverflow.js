@@ -4,9 +4,9 @@ export default class FakeStackOverflow extends React.Component {
   
   render() {
     return (
-      <section className="fakeso">
+      <div className="h-full m-0 ">
         <Content />
-      </section>
+      </div>
     );
   }
 }

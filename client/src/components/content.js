@@ -7,24 +7,27 @@ import TagPage from "./TagPage";
 import AskPage from "./AskPage";
 import Sidebar from "./sidebar/Sidebar";
 import QuestionPage from "./QuestionPage";
+import AnswerPage from "./AnswerPage";
 
 function AppContent() {
   const location = useLocation();
   const showSidebar = location.pathname !== "/";
 
   return (
-    <div id="App" className="flex overflow-hidden w-screen h-screen">
+    <div id="App" className="flex w-screen h-screen">
       {showSidebar && <Sidebar />}
-      <main className="flex-1">
-        <Routes>
+      <main className="flex-1 flex flex-col h-full">
+        <Routes className="flex-1">
           <Route path="/" element={<Welcome />} />
           <Route path="/questions" element={<HomePage />} />
           <Route path="/tags" element={<TagPage />} />
           <Route path="/askQ" element={<AskPage />} />
           <Route path="/question" element={<QuestionPage />} />
+          <Route path="/question/:questionId/answerquestion" element={<AnswerQuestion />} />
         </Routes>
       </main>
     </div>
+
   );
 }
 

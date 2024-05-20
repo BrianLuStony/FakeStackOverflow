@@ -2,7 +2,7 @@ import { getDateString } from "./content.js";
 import { useState, useEffect, useRef } from "react";
 import { matchAns } from "./api.js";
 import Comment from "./comment.js"
-import AnswerQuestion from "./answerQuestion.js";
+import AnswerQuestion from "./AnswerQuestion.js";
 import axios from "axios";
 
 

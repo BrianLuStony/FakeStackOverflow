@@ -5,9 +5,9 @@ import FakeStackOverflow from './components/fakestackoverflow.js'
 
 function App() {
   return (
-    <section className="fakeso">
+    <div className="h-full">
       <FakeStackOverflow />
-    </section>
+    </div>
   );
 }
 
