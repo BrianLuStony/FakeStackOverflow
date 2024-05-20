@@ -1,19 +1,18 @@
-import { checkHyper } from "./content.js";
 import { useEffect, useState } from "react";
-import { addDoc, collection, serverTimestamp, updateDoc, doc } from "firebase/firestore";
-import { db } from "../index.js";
-import { useLocation } from 'react-router-dom';
+import { addDoc, collection, serverTimestamp, updateDoc, doc, arrayUnion } from "firebase/firestore";
+import { db,auth } from "../index.js";
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAuthState } from "react-firebase-hooks/auth";
+import { checkHyper } from "./content.js";
 
 export default function AnswerQuestion() {
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const questionId = searchParams.get('questionId');
-
+  const {questionId}= useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     answerText: "",
   });
   const [formErrors, setFormErrors] = useState({});
+  const [user] = useAuthState(auth);
 
   useEffect(() => {}, [formData]);
 
@@ -25,8 +24,7 @@ export default function AnswerQuestion() {
   }
 
   async function handlePost(event) {
-    const [user] = useAuthState(auth);
-    event.preventDefault(); // prevent form from reloading
+    event.preventDefault();
     const errors = {};
 
     if (formData.answerText.trim().length === 0) {
@@ -43,15 +41,15 @@ export default function AnswerQuestion() {
         ans_by: userRef,
         ans_date_time: serverTimestamp(),
       };
-      await insertNewA(questionId, newAnswer); // Changed question.id to questionId
+      await insertNewA(questionId, newAnswer);
       setFormData({
         answerText: "",
       });
-      navigate(`/question?questionId=${questionId}`);
+      navigate(-1);
     }
   }
 
-  async function insertNewA(questionId, newAnswer) { // Changed question.id to questionId
+  async function insertNewA(questionId, newAnswer) {
     try {
       const answerRef = await addDoc(collection(db, "answers"), newAnswer);
       const questionRef = doc(db, "questions", questionId);
@@ -64,41 +62,29 @@ export default function AnswerQuestion() {
   }
 
   return (
-    <div id="answerpage">
-      <form id="aform">
-        <div id="answertext">
-          <h1>
-            Answer Text*{" "}
-            {formErrors.answerText && (
-              <span style={{ color: "red" }}>{formErrors.answerText}</span>
-            )}
-          </h1>
+    <div className="max-w-lg mx-auto mt-4 px-4">
+      <form id="aform" className="space-y-4">
+        <div className="text-gray-800">
+          <h1 className="text-2xl font-semibold mb-4">Post Your Answer</h1>
           <textarea
             name="answerText"
             type="text"
-            role="combobox"
-            className="answertext"
-            aria-expanded="false"
-            placeholder="Text"
-            autoComplete="off"
+            className="border border-gray-300 rounded-md p-2 w-full h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your answer..."
+            value={formData.answerText}
             onChange={handleChange}
           />
-          <div style={{ display: "inline-block", width: "150%" }}>
-            <button id="postA" type="submit" className="postA" onClick={handlePost}>
-              Post Answer
-            </button>
-            <span
-              style={{
-                marginLeft: "30%",
-                marginTop: "20px",
-                color: "red",
-                fontSize: "25px",
-              }}
-            >
-              *indicates mandatory fields
-              <br />
-            </span>
-          </div>
+          {formErrors.answerText && <p className="text-red-500">{formErrors.answerText}</p>}
+        </div>
+        <div className="flex justify-end">
+          <button
+            id="postA"
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow"
+            onClick={handlePost}
+          >
+            Post Answer
+          </button>
         </div>
       </form>
     </div>

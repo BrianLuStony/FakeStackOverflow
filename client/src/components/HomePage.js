@@ -126,11 +126,9 @@ export default function HomePage() {
   const incrementViews = async (questionId) => {
     try {
       const questionRef = doc(db, "questions", questionId);
-      console.log(`Incrementing views for questionId: ${questionId}`);
       await updateDoc(questionRef, {
         views: increment(1),
       });
-      console.log(`Views incremented for questionId: ${questionId}`);
     } catch (error) {
       console.error("Error incrementing views:", error);
     }

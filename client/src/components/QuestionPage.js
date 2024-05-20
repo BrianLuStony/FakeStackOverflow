@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate  } from "react-router-dom";
 import { db, auth } from "../index.js";
 import { doc, getDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -9,7 +9,7 @@ export default function QuestionPage() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const questionId = searchParams.get('questionId');
-
+  const navigate = useNavigate();
   const [question, setQuestion] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [tags, setTags] = useState([]);
@@ -55,7 +55,7 @@ export default function QuestionPage() {
     fetchQuestion();
   }, [questionId]);
 
-  const handleAnswerClick = (questionId) => {
+  const handleAnswerClick = () => {
     navigate(`/question/${questionId}/answerquestion`);
   };
   if (!question) {

@@ -7,7 +7,7 @@ import TagPage from "./TagPage";
 import AskPage from "./AskPage";
 import Sidebar from "./sidebar/Sidebar";
 import QuestionPage from "./QuestionPage";
-import AnswerPage from "./AnswerPage";
+import AnswerQuestion from "./AnswerQuestion";
 
 function AppContent() {
   const location = useLocation();
