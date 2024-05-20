@@ -6,6 +6,7 @@ import HomePage from "./HomePage";
 import TagPage from "./TagPage";
 import AskPage from "./AskPage";
 import Sidebar from "./sidebar/Sidebar";
+import QuestionPage from "./QuestionPage";
 
 function AppContent() {
   const location = useLocation();
@@ -20,6 +21,7 @@ function AppContent() {
           <Route path="/questions" element={<HomePage />} />
           <Route path="/tags" element={<TagPage />} />
           <Route path="/askQ" element={<AskPage />} />
+          <Route path="/question" element={<QuestionPage />} />
         </Routes>
       </main>
     </div>

@@ -252,25 +252,6 @@ function Ans(props) {
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
   const displayedAnswers = anss.slice(startIndex, endIndex).reverse();
-
-  if (props.ansQClick) {
-    return (
-      <AnswerQuestion
-        question={props.question}
-        handleAnsClick={handleAnsClick}
-        setAnswerC ={setAnswerC}
-        user = {props.user}
-        setAclick={props.setAclick}
-        editAns = {editAns}
-        setEditAns= {setEditAns}
-      />
-    );
-  } else if(clickComment){
-    return(
-      <Comment answer={clickComment} handleCClick={handleCClick}/>
-    );
-  }
-  else {
     return (
       <div id="inQ">
         <div id="A">
@@ -376,4 +357,3 @@ function Ans(props) {
       </div>
     );
   }
-}

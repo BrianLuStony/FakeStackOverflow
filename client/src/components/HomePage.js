@@ -23,13 +23,11 @@ export default function HomePage() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        console.log(user.uid);
         try {
           const userDocRef = doc(db, 'users', user.uid); // Adjust this path based on your Firestore structure
           const userDocSnap = await getDoc(userDocRef);
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
-            console.log(userData);
             setUserDisplayName(userData.username); // Adjust the field name based on your Firestore document
           } else {
             console.error("No such document!");
@@ -190,9 +188,7 @@ export default function HomePage() {
                 <div className="q_top">
                   <a
                     className="q_title bold"
-                    onClick={() => {
-                      console.log("I got clicked")
-                    }}
+                    href={`/question?questionId=${question.id}`}
                   >
                     {question.title}
                   </a>
