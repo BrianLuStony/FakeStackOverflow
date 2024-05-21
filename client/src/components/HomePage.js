@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { collection, onSnapshot, query, orderBy, where, getDoc, doc, updateDoc, increment } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, where, getDoc, doc, updateDoc, increment, Timestamp } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../index.js";
 import { getDateString } from "./content.js";
@@ -53,10 +53,16 @@ export default function HomePage() {
       if (sortBy === 'unanswered') {
         questionsQuery = query(questionsColRef, where("answers", "==", []), orderBy("ask_date_time", "desc"));
       } else if (sortBy === 'active') {
-        questionsQuery = query(questionsColRef, orderBy("last_activity", "desc"));
+        const oneDayAgo = Timestamp.fromDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
+        questionsQuery = query(
+          questionsColRef,
+          where("last_activity", ">=", oneDayAgo),
+          orderBy("last_activity", "desc")
+        );
       } else {
         questionsQuery = query(questionsColRef, orderBy("ask_date_time", "desc"));
       }
+
       if (tagId) {
         const tagRef = doc(db, 'tags', tagId);
         questionsQuery = query(questionsColRef, where("tags", "array-contains", tagRef));
@@ -175,45 +181,47 @@ export default function HomePage() {
       <div className="flex flex-col h-full">
         <div className="topbar bg-gray-200 p-4 flex justify-between items-center">
           <span className="text-lg font-bold">All questions</span>
-          <div className="flex items-center space-x-2">
-            <input
-              type="text"
-              placeholder="Search questions..."
-              onChange={handleInputChange}
-              onKeyDown={handleSearch}
-              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <div className="sort-buttons flex space-x-2">
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
-                onClick={() => handleSortChange('newest')}
-              >
-                Newest
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
-                onClick={() => handleSortChange('unanswered')}
-              >
-                Unanswered
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
-                onClick={() => handleSortChange('active')}
-              >
-                Active
-              </button>
+            <div className="flex items-center space-x-20">
+              <input
+                type="text"
+                placeholder="Search questions..."
+                onChange={handleInputChange}
+                onKeyDown={handleSearch}
+                className="px-20 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <div className="sort-buttons flex space-x-10">
+                <button
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                  onClick={() => handleSortChange('newest')}
+                >
+                  Newest
+                </button>
+                <button
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                  onClick={() => handleSortChange('unanswered')}
+                >
+                  Unanswered
+                </button>
+                <button
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                  onClick={() => handleSortChange('active')}
+                >
+                  Active
+                </button>
+              </div>
+              <div className="flex items-center space-x-5">
+                <button
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                  onClick={handleAsk}
+                >
+                  Ask Question
+                </button>
+                <span className="text-gray-700 font-medium">
+                  {userDisplayName}
+                </span>
+              </div>
             </div>
-            <button
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
-              onClick={handleAsk}
-            >
-              Ask Question
-            </button>
-            <span className="ml-4 text-gray-700 font-medium">
-              {userDisplayName}
-            </span>
           </div>
-        </div>
         <div id="Q" className="flex-1 overflow-auto">
           <ul id="questionList">
             {filteredQuestions.map((question) => (

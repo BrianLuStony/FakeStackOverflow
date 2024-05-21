@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useLocation,useNavigate  } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { db, auth } from "../index.js";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getDateString } from "./content.js";
 
@@ -55,15 +55,40 @@ export default function QuestionPage() {
     fetchQuestion();
   }, [questionId]);
 
+  const handleVote = async (itemId, type, itemType) => {
+    if (!user) return;
+
+    const itemRef = doc(db, itemType === 'question' ? "questions" : "answers", itemId);
+    const voteChange = type === 'upvote' ? increment(1) : increment(-1);
+
+    await updateDoc(itemRef, { votes: voteChange });
+
+    if (itemType === 'question') {
+      setQuestion((prevQuestion) => ({
+        ...prevQuestion,
+        votes: prevQuestion.votes + (type === 'upvote' ? 1 : -1),
+      }));
+    } else {
+      setAnswers((prevAnswers) =>
+        prevAnswers.map((answer) =>
+          answer.id === itemId
+            ? { ...answer, votes: answer.votes + (type === 'upvote' ? 1 : -1) }
+            : answer
+        )
+      );
+    }
+  };
+
   const handleAnswerClick = () => {
     navigate(`/question/${questionId}/answerquestion`);
   };
+
   if (!question) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div id="inQ" className="max-w-4xl mx-auto py-8 px-4">
+    <div id="inQ" className="max-w-4xl py-8 px-4">
       <div id="A" className="bg-white shadow rounded-lg p-6">
         <div id="abody" className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div id="aleft" className="col-span-1">
@@ -85,9 +110,19 @@ export default function QuestionPage() {
           </div>
           <div id="aright" className="col-span-1 flex flex-col items-center">
             <div className="votecell flex flex-col items-center mb-6">
-              <button className="vbutton bg-blue-500 text-white font-bold py-1 px-2 rounded mb-2">Upvote</button>
+              <button
+                className="vbutton bg-blue-500 text-white font-bold py-1 px-2 rounded mb-2"
+                onClick={() => handleVote(question.id, 'upvote', 'question')}
+              >
+                Upvote
+              </button>
               <div className="vcount text-lg font-semibold">{question.votes}</div>
-              <button className="vbutton bg-red-500 text-white font-bold py-1 px-2 rounded mt-2">Downvote</button>
+              <button
+                className="vbutton bg-red-500 text-white font-bold py-1 px-2 rounded mt-2"
+                onClick={() => handleVote(question.id, 'downvote', 'question')}
+              >
+                Downvote
+              </button>
             </div>
             <div className="auName text-center">
               <span className="text-red-500 font-medium">{question.asked_by.username}</span>
@@ -103,9 +138,19 @@ export default function QuestionPage() {
             {answers.map((answer) => (
               <li key={answer.id} className="answer bg-gray-50 p-4 rounded-lg shadow flex gap-4">
                 <div className="votecell flex flex-col items-center">
-                  <button className="vbutton bg-blue-500 text-white font-bold py-1 px-2 rounded mb-2">Upvote</button>
+                  <button
+                    className="vbutton bg-blue-500 text-white font-bold py-1 px-2 rounded mb-2"
+                    onClick={() => handleVote(answer.id, 'upvote', 'answer')}
+                  >
+                    Upvote
+                  </button>
                   <div className="vcount text-lg font-semibold">{answer.votes}</div>
-                  <button className="vbutton bg-red-500 text-white font-bold py-1 px-2 rounded mt-2">Downvote</button>
+                  <button
+                    className="vbutton bg-red-500 text-white font-bold py-1 px-2 rounded mt-2"
+                    onClick={() => handleVote(answer.id, 'downvote', 'answer')}
+                  >
+                    Downvote
+                  </button>
                 </div>
                 <div className="answerbody flex-1">
                   <p className="text-lg">{answer.text}</p>
@@ -119,7 +164,7 @@ export default function QuestionPage() {
             ))}
           </ul>
         </div>
-        <button type="submit" onClick = {() => handleAnswerClick()} className="mt-8 bg-green-500 text-white font-bold py-2 px-4 rounded shadow hover:bg-green-600">
+        <button type="submit" onClick={handleAnswerClick} className="mt-8 bg-green-500 text-white font-bold py-2 px-4 rounded shadow hover:bg-green-600">
           Answer Question
         </button>
       </div>

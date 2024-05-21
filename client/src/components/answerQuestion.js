@@ -54,7 +54,8 @@ export default function AnswerQuestion() {
       const answerRef = await addDoc(collection(db, "answers"), newAnswer);
       const questionRef = doc(db, "questions", questionId);
       await updateDoc(questionRef, {
-        answers: arrayUnion(answerRef)
+        answers: arrayUnion(answerRef),
+        last_activity: serverTimestamp()
       });
     } catch (error) {
       console.error("Error adding answer: ", error);
@@ -62,7 +63,7 @@ export default function AnswerQuestion() {
   }
 
   return (
-    <div className="max-w-lg mx-auto mt-4 px-4">
+    <div className="max-w-lg mt-4 px-4">
       <form id="aform" className="space-y-4">
         <div className="text-gray-800">
           <h1 className="text-2xl font-semibold mb-4">Post Your Answer</h1>

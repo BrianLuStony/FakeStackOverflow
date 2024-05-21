@@ -34,10 +34,10 @@ function SidebarHeader({ expanded, setExpanded }) {
 function NavButtons({ expanded, isActive }) {
   const navButtons = [
     {
-      path: "/",
+      path: "/questions",
       icon: <LayoutDashboard />,
       text: "Questions",
-      active: isActive("/"),
+      active: isActive("/questions"),
       alert: false,
     },
     {

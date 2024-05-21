@@ -62,6 +62,7 @@ export default function AskPage({ modifying, questionToModify, onCancel }) {
         answers: [],
         views: 0,
         votes: 0,
+        last_activity: serverTimestamp(),
       };
 
       if (modifying) {
@@ -82,7 +83,7 @@ export default function AskPage({ modifying, questionToModify, onCancel }) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl p-4">
       <div className="bg-white shadow-md rounded-lg p-6">
         <h1 className="text-2xl font-bold mb-4">
           {modifying ? "Edit Your Question" : "Ask a New Question"}
